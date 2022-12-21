@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js"> <!--<![endif]-->
+<%- include('./partials/login-head.ejs') %>
+
+	<body onload="getcookiedata()">
+		<div class="container theme-yeti theme-compact">
+
+			<nav class="navbar navbar-default navbar-fixed-top hidden-print" role="navigation">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<!-- application title is obtained from the name besides the yellow database icon in AppGini, use underscores for spaces -->
+					<a class="navbar-brand" href="/login"><i class="glyphicon glyphicon-home"></i> BLOG ADMIN</a>
+				</div>
+				<div class="collapse navbar-collapse">
+					<ul class="nav navbar-nav">
+					</ul>
+
+
+				</div>
+			</nav>
+			<div style="height: 70px;" class="hidden-print"></div>
+
+
+			<div class="notifcation-placeholder" id="notifcation-placeholder-89470652"></div>
+			<script>
+				$j(function () {
+					if (window.show_notification != undefined) return;
+
+					window.show_notification = function (options) {
+						/* wait till all dependencies ready */
+						if (window.notifications_ready == undefined) {
+							var op = options;
+							setTimeout(function () { show_notification(op); }, 20);
+							return;
+						}
+
+						var dismiss_class = '';
+						var dismiss_icon = '';
+						var cookie_name = 'hide_notification_' + options.id;
+						var notif_id = 'notifcation-' + Math.ceil(Math.random() * 1000000);
+
+						/* apply provided notficiation id if unique in page */
+						if (options.id != undefined) {
+							if (!$j('#' + options.id).length) notif_id = options.id;
+						}
+
+						/* notifcation should be hidden? */
+						if (Cookies.get(cookie_name) != undefined) return;
+
+						/* notification should be dismissable? */
+						if (options.dismiss_seconds > 0 || options.dismiss_days > 0) {
+							dismiss_class = ' alert-dismissible';
+							dismiss_icon = '<button type="button" class="close" data-dismiss="alert">&times;</button>';
+						}
+
+						/* remove old dismissed notficiations */
+						$j('.alert-dismissible.invisible').remove();
+
+						/* append notification to notifications container */
+						$j(
+							'<div class="alert alert-' + options['class'] + dismiss_class + '" id="' + notif_id + '">' +
+							dismiss_icon +
+							options.message +
+							'</div>'
+						).appendTo('#notifcation-placeholder-89470652');
+
+						var this_notif = $j('#' + notif_id);
+
+						/* dismiss after x seconds if requested */
+						if (options.dismiss_seconds > 0) {
+							setTimeout(function () { this_notif.addClass('invisible'); }, options.dismiss_seconds * 1000);
+						}
+
+						/* dismiss for x days if requested and user dismisses it */
+						if (options.dismiss_days > 0) {
+							var ex_days = options.dismiss_days;
+							this_notif.on('closed.bs.alert', function () {
+								/* set a cookie not to show this alert for ex_days */
+								Cookies.set(cookie_name, '1', { expires: ex_days });
+							});
+						}
+					}
+
+					/* cookies library already loaded? */
+					if (undefined != window.Cookies) {
+						window.notifications_ready = true;
+						return;
+					}
+
+					/* load cookies library */
+					$j.ajax({
+						url: 'resources/jscookie/js.cookie.js',
+						dataType: 'script',
+						cache: true,
+						success: function () { window.notifications_ready = true; }
+					});
+				})
+			</script>
+
+
+			<!-- process notifications -->
+			<div style="height: 60px; margin: -15px 0 -45px;">
+			</div>
+
+			<!-- Add header template below here .. -->
+
+
+
+			<div class="row">
+				<div class="col-sm-6 col-lg-8" id="login_splash">
+					<!-- customized splash content here -->
+				</div>
+				<div class="col-sm-6 col-lg-4">
+					<div class="panel panel-success">
+
+						<div class="panel-heading">
+							<h1 class="panel-title"><strong>Sign In Here</strong></h1>
+							<a class="btn btn-success pull-right" href="/signup">Sign Up</a>
+							<div class="clearfix"></div>
+						</div>
+
+						<div class="panel-body">
+							<form id="login" action="/api/login" method="post">
+								<div class="form-group">
+									<label class="control-label" for="username">Username</label>
+									<input class="form-control" name="username" id="username" type="text"
+										placeholder="Username" required>
+								</div>
+								<div class="form-group">
+									<label class="control-label" for="password">Password</label>
+									<input class="form-control" name="password" id="password" type="password"
+										placeholder="Password" required>
+									<span class="help-block">Forgot your password? <a
+											href='/change-password'>Click here</a></span>
+								</div>
+								<div class="checkbox">
+									<label class="control-label" for="rememberMe">
+										<input type="checkbox" name="rememberMe" id="rememberMe" onclick="setcookie()">
+										Remember me </label>
+								</div>
+
+								<div class="row">
+									<div class="col-sm-offset-3 col-sm-6">
+										<button name="signIn" type="submit" id="submit" value="signIn" id="submit"
+											class="btn btn-primary btn-lg btn-block" >Sign In</button>
+									</div>
+								</div>
+							</form>
+						</div>
+
+
+					</div>
+				</div>
+			</div>
+
+			<script>
+				
+			</script>
+
+			<script>
+				const form = document.getElementById('login')
+				form.addEventListener('submit', login)
+				
+				function setcookie() {
+					var u = document.getElementById('username').value
+					var p = document.getElementById('password').value
+
+					document.cookie="myusername="+u+";path=http://localhost:3000/dashboard/";
+					document.cookie="mypswd="+p+";path=http://localhost:3000/dashboard/";
+				}
+
+				function getcookiedata() {
+					console.log(document.cookie);
+					var user = getCookie('myusername')
+					var pswd = getCookie('mypswd')
+
+					document.getElementById('username').value = user;
+					document.getElementById('password').value = pswd;
+				}
+				
+				function getCookie(cname) {
+					var name = cname +"=";
+					var decodedCookie = decodeURIComponent(document.cookie);
+					var ca = decodedCookie.split(';');
+					for(var i=0; i<ca.length;i++)
+					{
+						var c = ca[i];
+						while (c.charAt(0) == ' ') {
+							c = c.substring(1);
+						}
+						if(c.indexOf(name) == 0) {
+							return c.substring(name.length, c.length);
+						}
+					}
+					return "";
+				}
+
+				async function login(event) {
+					event.preventDefault()
+					const username = document.getElementById('username').value
+					const password = document.getElementById('password').value
+					
+					const result = await fetch('/api/login', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json'
+						},
+						body: JSON.stringify({
+							username,
+							password,
+						})
+					}).then((res) => res.json())
+
+					if (result.status === 'ok') {
+						// everythign went fine
+						console.log('Got the token: ', result.data)
+						window.localStorage.setItem('token', result.data)
+						if(username=="admin")window.location.href = "/dashboard";
+						else window.location.href = "/user-dashboard";
+					} else {
+						alert(result.error)
+					}
+				}
+			</script>
+
+			<script>document.getElementById('username').focus();</script>
+			<!-- Add footer template above here -->
+			<div class="clearfix"></div>
+			<div style="height: 70px;" class="hidden-print"></div>
+
+		</div> <!-- /div class="container" -->
+		<script src="/resources/lightbox/js/lightbox.min.js"></script>
+	</body>
+
+</html>

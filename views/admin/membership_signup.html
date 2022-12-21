@@ -1,0 +1,357 @@
+
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="description" content="">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<title>BLOG ADMIN | </title>
+		<link id="browser_favicon" rel="shortcut icon" href="resources/images/appgini-icon.png">
+
+		<link rel="stylesheet" href="resources/initializr/css/yeti.css">
+		<link rel="stylesheet" href="resources/lightbox/css/lightbox.css" media="screen">
+		<link rel="stylesheet" href="resources/select2/select2.css" media="screen">
+		<link rel="stylesheet" href="resources/timepicker/bootstrap-timepicker.min.css" media="screen">
+		<link rel="stylesheet" href="resources/datepicker/css/datepicker.css" media="screen">
+		<link rel="stylesheet" href="dynamic.css">
+
+		<!--[if lt IE 9]>
+			<script src="resources/initializr/js/vendor/modernizr-2.6.2-respond-1.1.0.min.js"></script>
+		<![endif]-->
+		<script src="resources/jquery/js/jquery-1.12.4.min.js"></script>
+		<script>var $j = jQuery.noConflict();</script>
+		<script src="resources/jquery/js/jquery.mark.min.js"></script>
+		<script src="resources/initializr/js/vendor/bootstrap.min.js"></script>
+		<script src="resources/lightbox/js/prototype.js"></script>
+		<script src="resources/lightbox/js/scriptaculous.js?load=effects"></script>
+		<script src="resources/select2/select2.min.js"></script>
+		<script src="resources/timepicker/bootstrap-timepicker.min.js"></script>
+		<script src="resources/jscookie/js.cookie.js"></script>
+		<script src="resources/datepicker/js/datepicker.packed.js"></script>
+
+		
+	</head>
+	<body>
+		<div class="container theme-yeti theme-compact">
+			
+									<nav class="navbar navbar-default navbar-fixed-top hidden-print" role="navigation">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<!-- application title is obtained from the name besides the yellow database icon in AppGini, use underscores for spaces -->
+				<a class="navbar-brand" href="index.html"><i class="glyphicon glyphicon-home"></i> BLOG ADMIN</a>
+			</div>
+			<div class="collapse navbar-collapse">
+				<ul class="nav navbar-nav">
+															<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown">Jump to ... <b class="caret"></b></a>
+					<ul class="dropdown-menu" role="menu"></ul>
+				</li>									</ul>
+
+				
+															<p class="navbar-text navbar-right">&nbsp;</p>
+						<a href="index.html?signIn=1" class="btn btn-success navbar-btn navbar-right">Sign In</a>
+						<p class="navbar-text navbar-right">
+							You are not signed in						</p>
+												</div>
+		</nav>
+						<div style="height: 70px;" class="hidden-print"></div>
+			
+			
+			<div class="notifcation-placeholder" id="notifcation-placeholder-15960478"></div>
+			<script>
+				$j(function(){
+					if(window.show_notification != undefined) return;
+
+					window.show_notification = function(options){
+						/* wait till all dependencies ready */
+						if(window.notifications_ready == undefined){
+							var op = options;
+							setTimeout(function(){ show_notification(op); }, 20);
+							return;
+						}
+
+						var dismiss_class = '';
+						var dismiss_icon = '';
+						var cookie_name = 'hide_notification_' + options.id;
+						var notif_id = 'notifcation-' + Math.ceil(Math.random() * 1000000);
+
+						/* apply provided notficiation id if unique in page */
+						if(options.id != undefined){
+							if(!$j('#' + options.id).length) notif_id = options.id;
+						}
+
+						/* notifcation should be hidden? */
+						if(Cookies.get(cookie_name) != undefined) return;
+
+						/* notification should be dismissable? */
+						if(options.dismiss_seconds > 0 || options.dismiss_days > 0){
+							dismiss_class = ' alert-dismissible';
+							dismiss_icon = '<button type="button" class="close" data-dismiss="alert">&times;</button>';
+						}
+
+						/* remove old dismissed notficiations */
+						$j('.alert-dismissible.invisible').remove();
+
+						/* append notification to notifications container */
+						$j(
+							'<div class="alert alert-' + options['class'] + dismiss_class + '" id="' + notif_id + '">' + 
+								dismiss_icon +
+								options.message + 
+							'</div>'
+						).appendTo('#notifcation-placeholder-15960478');
+
+						var this_notif = $j('#' + notif_id);
+
+						/* dismiss after x seconds if requested */
+						if(options.dismiss_seconds > 0){
+							setTimeout(function(){ this_notif.addClass('invisible'); }, options.dismiss_seconds * 1000);
+						}
+
+						/* dismiss for x days if requested and user dismisses it */
+						if(options.dismiss_days > 0){
+							var ex_days = options.dismiss_days;
+							this_notif.on('closed.bs.alert', function(){
+								/* set a cookie not to show this alert for ex_days */
+								Cookies.set(cookie_name, '1', { expires: ex_days });
+							});
+						}
+					}
+
+					/* cookies library already loaded? */
+					if(undefined != window.Cookies){
+						window.notifications_ready = true;
+						return;
+					}
+
+					/* load cookies library */
+					$j.ajax({
+						url: 'resources/jscookie/js.cookie.js',
+						dataType: 'script',
+						cache: true,
+						success: function(){ window.notifications_ready = true; }
+					});
+				})
+			</script>
+
+			
+			<!-- process notifications -->
+						<div style="height: 60px; margin: -15px 0 -45px;">
+							</div>
+
+						<!-- Add header template below here .. -->
+
+
+	<div class="row">
+		<div class="hidden-xs col-sm-4 col-md-6 col-lg-8" id="signup_splash">
+			<!-- customized splash content here -->
+		</div>
+
+		<div class="col-sm-8 col-md-6 col-lg-4">
+			<div class="panel panel-success">
+
+				<div class="panel-heading">
+					<h1 class="panel-title"><strong>Sign Up Here!</strong></h1>
+				</div>
+
+				<div class="panel-body">
+					<form method="post" action="membership_signup.html">
+						<div class="form-group">
+							<label for="username" class="control-label">Username</label>
+							<input class="form-control input-lg" type="text" required="" placeholder="Username" id="username" name="newUsername">
+							<span id="usernameAvailable" class="help-block hidden pull-left"><i class="glyphicon glyphicon-ok"></i> Username  is available and you can take it.</span>
+							<span id="usernameNotAvailable" class="help-block hidden pull-left"><i class="glyphicon glyphicon-remove"></i> Username  already exists or is invalid. Make sure you provide a username containing 4 to 20 valid characters.</span>
+							<div class="clearfix"></div>
+						</div>
+
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="form-group">
+									<label for="password" class="control-label">Password</label>
+									<input class="form-control" type="password" required="" placeholder="Password" id="password" name="password">
+								</div>
+							</div>
+							<div class="col-sm-6">
+								<div class="form-group">
+									<label for="confirmPassword" class="control-label">Confirm Password</label>
+									<input class="form-control" type="password" required="" placeholder="Confirm Password" id="confirmPassword" name="confirmPassword">
+								</div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="email" class="control-label">Email Address</label>
+							<input class="form-control" type="text" required="" placeholder="Email Address" id="email" name="email">
+						</div>
+
+						<div class="form-group">
+							<label for="group" class="control-label">Group</label>
+							<select class="form-control" name="groupID" id="groupID"><option value="3" selected class="">authors </option></select>							<span class="help-block">If you choose to sign up to a group marked with an asterisk (*), you won't be able to log in until the admin approves you. You'll receive an email when you are approved.</span>
+						</div>
+
+																<div class="row form-group">
+										   <div class="col-sm-3"><label class="control-label" for="custom1">Full Name</label></div>
+										   <div class="col-sm-9"><input class="form-control" type="text" placeholder="Full Name" id="custom1" name="custom1"></div>
+										</div>
+																				<div class="row form-group">
+										   <div class="col-sm-3"><label class="control-label" for="custom2">Address</label></div>
+										   <div class="col-sm-9"><input class="form-control" type="text" placeholder="Address" id="custom2" name="custom2"></div>
+										</div>
+																				<div class="row form-group">
+										   <div class="col-sm-3"><label class="control-label" for="custom3">City</label></div>
+										   <div class="col-sm-9"><input class="form-control" type="text" placeholder="City" id="custom3" name="custom3"></div>
+										</div>
+																				<div class="row form-group">
+										   <div class="col-sm-3"><label class="control-label" for="custom4">Phone</label></div>
+										   <div class="col-sm-9"><input class="form-control" type="text" placeholder="Phone" id="custom4" name="custom4"></div>
+										</div>
+										
+						<div class="row">
+							<div class="col-sm-offset-3 col-sm-6">
+								<button class="btn btn-primary btn-lg btn-block" value="signUp" id="submit" type="submit" name="signUp">Sign Up</button>
+							</div>
+						</div>
+
+					</form>
+				</div> <!-- /div class="panel-body" -->
+			</div> <!-- /div class="panel ..." -->
+		</div> <!-- /div class="col..." -->
+	</div> <!-- /div class="row" -->
+
+	<script>
+		$j(function() {
+			$j('#username').focus();
+
+			$j('#usernameAvailable, #usernameNotAvailable').click(function(){ $j('#username').focus(); });
+			$j('#username').on('keyup blur', checkUser);
+
+			/* password strength feedback */
+			$j('#password').on('keyup blur', function(){
+				var ps = passwordStrength($j('#password').val(), $j('#username').val());
+
+				if(ps == 'strong'){
+					$j('#password').parents('.form-group').removeClass('has-error has-warning').addClass('has-success');
+					$j('#password').attr('title', 'Password strength: strong');
+				}else if(ps == 'good'){
+					$j('#password').parents('.form-group').removeClass('has-success has-error').addClass('has-warning');
+					$j('#password').attr('title', 'Password strength: good');
+				}else{
+					$j('#password').parents('.form-group').removeClass('has-success has-warning').addClass('has-error');
+					$j('#password').attr('title', 'Password strength: weak');
+				}
+			});
+
+			/* inline feedback of confirm password */
+			$j('#confirmPassword').on('keyup blur', function(){
+				if($j('#confirmPassword').val() != $j('#password').val() || !$j('#confirmPassword').val().length){
+					$j('#confirmPassword').parents('.form-group').removeClass('has-success').addClass('has-error');
+				}else{
+					$j('#confirmPassword').parents('.form-group').removeClass('has-error').addClass('has-success');
+				}
+			});
+
+			/* inline feedback of email */
+			$j('#email').on('change', function(){
+				if(validateEmail($j('#email').val())){
+					$j('#email').parents('.form-group').removeClass('has-error').addClass('has-success');
+				}else{
+					$j('#email').parents('.form-group').removeClass('has-success').addClass('has-error');
+				}
+			});
+
+			/* validate form before submitting */
+			$j('#submit').click(function(e){ if(!jsValidateSignup()) e.preventDefault(); })
+		});
+
+		var uaro; // user availability request object
+		function checkUser(){
+			// abort previous request, if any
+			if(uaro != undefined) uaro.abort();
+
+			reset_username_status();
+
+			uaro = $j.ajax({
+					url: 'checkMemberID.php',
+					type: 'GET',
+					data: { 'memberID': $j('#username').val() },
+					success: function(resp){
+						var ua=resp;
+						if(ua.match(/\<!-- AVAILABLE --\>/)){
+							reset_username_status('success');
+						}else{
+							reset_username_status('error');
+						}
+					}
+			});
+		}
+
+		function reset_username_status(status){
+			$j('#usernameNotAvailable, #usernameAvailable')
+				.addClass('hidden')
+				.parents('.form-group')
+				.removeClass('has-error has-success');
+
+			if(status == undefined) return;
+			if(status == 'success'){
+				$j('#usernameAvailable')
+					.removeClass('hidden')
+					.parents('.form-group')
+					.addClass('has-success');
+			}
+			if(status == 'error'){
+				$j('#usernameNotAvailable')
+					.removeClass('hidden')
+					.parents('.form-group')
+					.addClass('has-error');
+			}
+		}
+
+		/* validate data before submitting */
+		function jsValidateSignup(){
+			var p1 = $j('#password').val();
+			var p2 = $j('#confirmPassword').val();
+			var email = $j('#email').val();
+
+			/* user exists? */
+			if(!$j('#username').parents('.form-group').hasClass('has-success')){
+				modal_window({ message: '<div class="alert alert-danger">Username &lt;MemberID&gt; already exists or is invalid. Make sure you provide a username containing 4 to 20 valid characters.</div>', title: "Error:", close: function(){ $j('#username').focus(); } });
+				return false;
+			}
+
+			/* passwords not matching? */
+			if(p1 != p2){
+				modal_window({ message: '<div class="alert alert-danger">Password doesn&#039;t match. Please go back and correct the password</div>', title: "Error:", close: function(){ $j('#confirmPassword').focus(); } });
+				return false;
+			}
+
+			if(!validateEmail(email)){
+				modal_window({ message: '<div class="alert alert-danger">Invalid email address. Please go back and correct your email address.</div>', title: "Error:", close: function(){ $j('#email').focus(); } });
+				return false;
+			}
+
+			return true;
+		}
+	</script>
+
+	<style>
+		#usernameAvailable,#usernameNotAvailable{ cursor: pointer; }
+	</style>
+
+
+			<!-- Add footer template above here -->
+			<div class="clearfix"></div>
+							<div style="height: 70px;" class="hidden-print"></div>
+			
+		</div> <!-- /div class="container" -->
+				<script src="resources/lightbox/js/lightbox.min.js"></script>
+	</body>
+</html>

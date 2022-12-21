@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js"> <!--<![endif]-->
+<%- include('./partials/blogview-head.ejs') %>
+
+    <body>
+        <div class="container theme-yeti theme-compact">
+
+            <nav class="navbar navbar-default navbar-fixed-top hidden-print" role="navigation">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <!-- application title is obtained from the name besides the yellow database icon in AppGini, use underscores for spaces -->
+                    <a class="navbar-brand" href="/dashboard"><i class="glyphicon glyphicon-home"></i> BLOG ADMIN</a>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Jump to ... <b
+                                    class="caret"></b></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="blog_categories_view.php?t=1670927253"><img
+                                            src="resources/table_icons/award_star_bronze_2.png" height="32"> Blog
+                                        categories</a></li>
+                                <li><a href="blogs_view.php?t=1670927253"><img src="resources/table_icons/feed.png"
+                                            height="32"> Blogs</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+
+
+                    <ul class="nav navbar-nav navbar-right hidden-xs" style="min-width: 330px;">
+                        <a class="btn navbar-btn btn-default" href="index.php?signOut=1"><i
+                                class="glyphicon glyphicon-log-out"></i> Sign Out</a>
+                        <p class="navbar-text">
+                            Signed in as <strong><a href="membership_profile.php" class="navbar-link">user</a></strong>
+                        </p>
+                    </ul>
+                    <ul class="nav navbar-nav visible-xs">
+                        <a class="btn navbar-btn btn-default btn-lg visible-xs" href="index.php?signOut=1"><i
+                                class="glyphicon glyphicon-log-out"></i> Sign Out</a>
+                        <p class="navbar-text text-center">
+                            Signed in as <strong><a href="membership_profile.php" class="navbar-link">user</a></strong>
+                        </p>
+                    </ul>
+                    <script>
+                        /* periodically check if user is still signed in */
+                        setInterval(function () {
+                            $j.ajax({
+                                url: 'ajax_check_login.php',
+                                success: function (username) {
+                                    if (!username.length) window.location = 'index.php?signIn=1';
+                                }
+                            });
+                        }, 60000);
+                    </script>
+                </div>
+            </nav>
+            <div style="height: 70px;" class="hidden-print"></div>
+
+
+            <div class="notifcation-placeholder" id="notifcation-placeholder-82806095"></div>
+            <script>
+                $j(function () {
+                    if (window.show_notification != undefined) return;
+
+                    window.show_notification = function (options) {
+                        /* wait till all dependencies ready */
+                        if (window.notifications_ready == undefined) {
+                            var op = options;
+                            setTimeout(function () { show_notification(op); }, 20);
+                            return;
+                        }
+
+                        var dismiss_class = '';
+                        var dismiss_icon = '';
+                        var cookie_name = 'hide_notification_' + options.id;
+                        var notif_id = 'notifcation-' + Math.ceil(Math.random() * 1000000);
+
+                        /* apply provided notficiation id if unique in page */
+                        if (options.id != undefined) {
+                            if (!$j('#' + options.id).length) notif_id = options.id;
+                        }
+
+                        /* notifcation should be hidden? */
+                        if (Cookies.get(cookie_name) != undefined) return;
+
+                        /* notification should be dismissable? */
+                        if (options.dismiss_seconds > 0 || options.dismiss_days > 0) {
+                            dismiss_class = ' alert-dismissible';
+                            dismiss_icon = '<button type="button" class="close" data-dismiss="alert">&times;</button>';
+                        }
+
+                        /* remove old dismissed notficiations */
+                        $j('.alert-dismissible.invisible').remove();
+
+                        /* append notification to notifications container */
+                        $j(
+                            '<div class="alert alert-' + options['class'] + dismiss_class + '" id="' + notif_id + '">' +
+                            dismiss_icon +
+                            options.message +
+                            '</div>'
+                        ).appendTo('#notifcation-placeholder-82806095');
+
+                        var this_notif = $j('#' + notif_id);
+
+                        /* dismiss after x seconds if requested */
+                        if (options.dismiss_seconds > 0) {
+                            setTimeout(function () { this_notif.addClass('invisible'); }, options.dismiss_seconds * 1000);
+                        }
+
+                        /* dismiss for x days if requested and user dismisses it */
+                        if (options.dismiss_days > 0) {
+                            var ex_days = options.dismiss_days;
+                            this_notif.on('closed.bs.alert', function () {
+                                /* set a cookie not to show this alert for ex_days */
+                                Cookies.set(cookie_name, '1', { expires: ex_days });
+                            });
+                        }
+                    }
+
+                    /* cookies library already loaded? */
+                    if (undefined != window.Cookies) {
+                        window.notifications_ready = true;
+                        return;
+                    }
+
+                    /* load cookies library */
+                    $j.ajax({
+                        url: 'resources/jscookie/js.cookie.js',
+                        dataType: 'script',
+                        cache: true,
+                        success: function () { window.notifications_ready = true; }
+                    });
+                })
+            </script>
+
+
+            <!-- process notifications -->
+            <div style="height: 38px; margin: -15px 0 -45px;">
+            </div>
+
+            <!-- Add header template below here .. -->
+
+            <div class="row">
+                <div class="col-xs-12">
+                    <form enctype="multipart/form-data" id="add-blog" method="post" name="myform" action="/api/save-blog">
+                        <script>function enterAction() { if ($j("input[name=SearchString]:focus").length) { $j("#Search").click(); } return false; }</script>
+                        <input id="EnterAction" type="submit" style="position: absolute; left: 0px; top: -250px;"
+                            onclick="return enterAction();">
+                        <div class="page-header">
+                            <h1><a style="text-decoration: none; color: inherit;" href="/blog-view"><img
+                                        src="resources/table_icons/feed.png"> Blogs</a></h1>
+                        </div><!-- possible values for current_view: TV, TVP, DV, DVP, Filters, TVDV --><input
+                            name="current_view" id="current_view" value="DV" type="hidden"><input name="SortField"
+                            value="2" type="hidden"><input name="SelectedID" value="" type="hidden"><input
+                            name="SelectedField" value="" type="hidden"><input name="SortDirection" type="hidden"
+                            value="asc"><input name="FirstRecord" type="hidden" value="1"><input name="NoDV"
+                            type="hidden" value=""><input name="PrintDV" type="hidden" value=""><input
+                            name="FilterAnd[5]" value="and" type="hidden">
+                        <input name="FilterAnd[9]" value="and" type="hidden">
+                        <input name="FilterAnd[13]" value="and" type="hidden">
+                        <input name="FilterAnd[17]" value="and" type="hidden">
+                        <input name="FilterAnd[21]" value="and" type="hidden">
+                        <input name="FilterAnd[25]" value="and" type="hidden">
+                        <input name="FilterAnd[29]" value="and" type="hidden">
+                        <input name="FilterAnd[33]" value="and" type="hidden">
+                        <input name="FilterAnd[37]" value="and" type="hidden">
+                        <input name="FilterAnd[41]" value="and" type="hidden">
+                        <input name="FilterAnd[45]" value="and" type="hidden">
+                        <input name="FilterAnd[49]" value="and" type="hidden">
+                        <input name="FilterAnd[53]" value="and" type="hidden">
+                        <input name="FilterAnd[57]" value="and" type="hidden">
+                        <input name="FilterAnd[61]" value="and" type="hidden">
+                        <input name="FilterAnd[65]" value="and" type="hidden">
+                        <input name="FilterAnd[69]" value="and" type="hidden">
+                        <input name="FilterAnd[73]" value="and" type="hidden">
+                        <input name="FilterAnd[77]" value="and" type="hidden">
+                        <input name="DisplayRecords" value="all" type="hidden" />
+                        <div class="col-xs-12 detail_view ">
+                            <div class="panel panel-default">
+                                <!-- Edit this file to change the layout of the detail view form -->
+
+                                <a name="detail-view"></a>
+                                <div class="panel-heading">
+                                    <h3 class="panel-title"><strong>Blog details</strong></h3>
+                                </div>
+
+                                <div class="panel-body" id="blogs_dv_container">
+                                    <!-- child links -->
+                                    <div class="row">
+                                        <div class="col-xs-12">
+                                            <input type="hidden" id="editors_choice_hclink"
+                                                value="editors_choice_view.php?filterer_blog=&">
+                                            <div class="clearfix"></div>
+                                        </div>
+                                    </div>
+                                    <!-- <hr class="hidden-xs hidden-md"> -->
+
+                                    <div class="row">
+                                        <!-- form inputs -->
+                                        <div class="col-md-8 col-lg-10" id="blogs_dv_form">
+                                            <fieldset class="form-horizontal">
+
+                                                <!-- <div class="form-group">
+					<hr class="hidden-md hidden-lg">
+					<label for="id" class="control-label col-lg-3">ID</label>
+					<div class="col-lg-9">
+						<div class="form-control-static" id="id"></div>
+					</div>
+				</div> -->
+                                                <div class="form-group">
+                                                    <hr class="hidden-md hidden-lg">
+                                                    <label for="title" class="control-label col-lg-3">Title<span
+                                                            class="text-danger">*</span> <i
+                                                            class="glyphicon glyphicon-info-sign text-info"
+                                                            data-toggle="collapse"
+                                                            data-target="#title-description"></i></label>
+                                                    <div class="col-lg-9">
+                                                        <span class="help-block collapse" id="title-description">
+                                                            <div class="alert alert-info">Enter your blog title</div>
+                                                        </span>
+
+                                                        <input maxlength="190" type="text" class="form-control"
+                                                            name="title" id="title" value="" required>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <hr class="hidden-md hidden-lg">
+                                                    <label for="category" class="control-label col-lg-3"
+                                                        data-parent_link="view_parent_modal">Category<span
+                                                            class="text-danger">*</span> <i
+                                                            class="glyphicon glyphicon-info-sign text-info"
+                                                            data-toggle="collapse"
+                                                            data-target="#category-description"></i></label>
+                                                    <div class="col-lg-9">
+                                                        <span class="help-block collapse" id="category-description">
+                                                            <div class="alert alert-info">select blog category</div>
+                                                        </span>
+                                                        <input maxlength="190" type="text" class="form-control"
+                                                            name="category" id="category" value="" required>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <hr class="hidden-md hidden-lg">
+                                                    <label for="content" class="control-label col-lg-3">Content<span
+                                                            class="text-danger">*</span> <i
+                                                            class="glyphicon glyphicon-info-sign text-info"
+                                                            data-toggle="collapse"
+                                                            data-target="#content-description"></i></label>
+                                                    <div class="col-lg-9">
+                                                        <span class="help-block collapse" id="content">
+                                                            <div class="alert alert-info">Enter your blog content here
+                                                            </div>
+                                                        </span>
+
+                                                        <textarea name="content" id="content" rows="5"
+                                                            cols="80"></textarea>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <hr class="hidden-md hidden-lg">
+                                                    <label class="control-label col-lg-3">Photo<span
+                                                            class="text-danger">*</span> <i
+                                                            class="glyphicon glyphicon-info-sign text-info"
+                                                            data-toggle="collapse"
+                                                            data-target="#photo-description"></i></label>
+                                                    <div class="col-lg-9">
+                                                        <span class="help-block collapse" id="photo-description">
+                                                            <div class="alert alert-info">Maximum file size allowed:
+                                                                5000 KB.<br>Allowed file types: jpg, jpeg, gif, png
+                                                            </div>
+                                                        </span>
+
+                                                        <div class="form-control-static">
+                                                            <div class="pull-left">
+
+                                                                <a href="./images/blank.gif"><img
+                                                                        src="thumbnail.php?i=blank.gif&t=blogs&f=photo&v=dv"
+                                                                        class="img-thumbnail" id="photo-image"></a>
+                                                            </div>
+
+                                                            <div class="pull-right" style="overflow-x: hidden;">
+                                                                <div class="hidden-md hidden-lg vspacer-lg"></div>
+                                                                <!-- <input type=hidden name=MAX_FILE_SIZE
+                                                                    value=5120000>Upload new file <input type="file"
+                                                                    name="photo" id="photo"> -->
+                                                            </div>
+                                                            <div class="clearfix"></div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <hr class="hidden-md hidden-lg">
+                                                    <label for="date" class="control-label col-lg-3">Date <i
+                                                            class="glyphicon glyphicon-info-sign text-info"
+                                                            data-toggle="collapse"
+                                                            data-target="#date-description"></i></label>
+                                                    <div class="col-lg-9">
+                                                        <span class="help-block collapse" id="date-description">
+                                                            <div class="alert alert-info">system automatically generates
+                                                                current date</div>
+                                                        </span>
+
+                                                        <div class="form-control-static" id="date">
+                                                            <p id="demo"></p>
+                                                            <script>
+                                                                const d = new Date();
+                                                                const yyyy = d.getFullYear();
+                                                                let mm = d.getMonth() + 1;
+                                                                let dd = d.getDate();
+
+                                                                if (dd < 10) dd = '0' + dd;
+                                                                if (mm < 10) mm = '0' + mm;
+
+                                                                const formattedToday = dd + '/' + mm + '/' + yyyy;
+                                                                document.getElementById("demo").innerHTML = formattedToday;
+                                                            </script>
+                                                            <!-- <input type="hidden" name="date"
+                                                            value=""> -->
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <hr class="hidden-md hidden-lg">
+                                                    <label for="author" class="control-label col-lg-3">Author <i
+                                                            class="glyphicon glyphicon-info-sign text-info"
+                                                            data-toggle="collapse"
+                                                            data-target="#author-description"></i></label>
+                                                    <div class="col-lg-9">
+                                                        <span class="help-block collapse" id="author-description">
+                                                            <div class="alert alert-info">system automatically generates
+                                                                author</div>
+                                                        </span>
+
+                                                        <div class="form-control-static" id="author">
+                                                            <!-- creatorUsername -->
+                                                            <script>
+
+                                                            </script>
+                                                            <!-- <input type="hidden" name="author"
+                                                            value=""> -->
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+
+                                            </fieldset>
+                                        </div>
+
+                                        <!-- DV action buttons -->
+                                        <hr class="hidden-md hidden-lg">
+                                        <div class="col-md-4 col-lg-2" id="blogs_dv_action_buttons">
+                                            <div class="btn-toolbar">
+                                                <div class="btn-group-vertical btn-group-lg" style="width: 100%;">
+
+                                                </div>
+                                                <p></p>
+                                                <div class="btn-group-vertical btn-group-sm" style="width: 100%;">
+                                                    <button type="submit" class="btn btn-default" id="deselect"
+                                                        name="deselect_x" value="1"
+                                                        onclick="$j('form').eq(0).attr('novalidate', 'novalidate'); document.myform.reset(); return true;"
+                                                        title="Back"><i class="glyphicon glyphicon-chevron-left"></i>
+                                                        Back</button>
+                                                    <!-- DVPRINT_BUTTON -->
+
+                                                </div>
+                                                <p></p>
+                                                <div class="btn-group-vertical btn-group-sm" style="width: 100%;">
+                                                    <button type="submit" class="btn btn-success" id="insert"
+                                                        name="insert_x" value="1"
+                                                        onclick="return blogs_validateData();"><i
+                                                            class="glyphicon glyphicon-plus-sign"></i> Save New</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <!-- child records -->
+
+                                    <div class="row">
+                                        <div class="col-lg-10 col-lg-offset-1">
+                                            <div id="blogs-children" class="children-tabs"></div>
+                                        </div>
+                                    </div>
+
+                                </div><!-- /div class="panel-body" -->
+                                <script src="nicEdit.js"></script>
+                                <script>
+                                    $j(function () {
+                                        var add_new_mode = (!$j('input[name=SelectedID]').val());
+                                        var embedded_mode = ($j('input[name=Embedded]').val() == 1);
+
+                                        /* auto-close embedded page? */
+                                        var autoclose_mode = ($j('input[name=AutoClose]').val() == 1);
+                                        var record_added_ok = (location.search.split('record-added-ok=').length == 2);
+                                        var record_updated_ok = (location.search.split('record-updated-ok=').length == 2);
+                                        if ((record_added_ok || record_updated_ok) && embedded_mode && autoclose_mode) {
+                                            setTimeout(AppGini.closeParentModal, 2000);
+                                        }
+
+                                        bkLib.onDomLoaded(function () {
+                                            if ($j('textarea#content').length) new nicEditor({ fullPanel: true }).panelInstance('content');
+
+                                            $j('.nicEdit-panelContain').parent().width('100%');
+                                            $j('.nicEdit-panelContain').parent().next().width('98%');
+                                            $j('.nicEdit-main').width('99%');
+                                        });
+                                        /* enable DV action buttons to float on scrolling down the form */
+                                        enable_dvab_floating();
+
+                                        if (!(embedded_mode && AppGini.mobileDevice())) {
+                                            $j('select, input[type=text], textarea').not(':disabled').eq(0).focus();
+                                        }
+
+                                        $j('form').eq(0).change(function () {
+                                            if ($j(this).data('already_changed')) return;
+                                            if ($j('#deselect').length) $j('#deselect').removeClass('btn-default').addClass('btn-warning').get(0).lastChild.data = " Cancel";
+                                            $j(this).data('already_changed', true);
+                                        });
+
+                                        $j('a[href="./images/"]').click(function () { return false; });
+
+                                        if (embedded_mode) {
+                                            /* hide links to children tables in embedded mode */
+                                            $j('.detail_view a[id$=_link]').remove();
+
+                                            /* append embedded mode to all links */
+                                            var append_embedded = function () {
+                                                $j('a[href]:not([href^="#"]):not([href^="javascript"]):not([href$="Embedded=1"]):not([href*="link.php?t="]):not([href^="mailto:"])').each(
+                                                    function () {
+                                                        $j(this).attr('href', $j(this).attr('href') + '&Embedded=1');
+                                                    }
+                                                );
+                                            }
+                                            setTimeout(append_embedded, 500);
+                                            setTimeout(append_embedded, 1500);
+                                            setTimeout(append_embedded, 2500);
+                                            setTimeout(append_embedded, 3500);
+                                        }
+
+                                        /* when no record is selected ('add new' mode) */
+                                        if (add_new_mode) {
+                                            /* hide links to children tables */
+                                            $j('.detail_view a[id$=_link]').remove();
+                                        } else {
+                                            post(
+                                                'parent-children.php', {
+                                                ParentTable: 'blogs',
+                                                SelectedID: '',
+                                                Operation: 'show-children'
+                                            },
+                                                'blogs-children'
+                                            );
+                                        }
+
+                                        if (!embedded_mode) {
+                                            /* add a horizontal spacer to [add new parent] buttons that don't have a spacered element before them */
+                                            $j('.add_new_parent').prev(':not(.hspacer-md)').next().addClass('hspacer-md');
+
+                                            $j('.add_new_parent').click(function () {
+                                                var pt = $j(this).attr('id').replace(/_add_new$/, '');
+                                                modal_window({
+                                                    url: pt + '_view.php?addNew_x=1&Embedded=1',
+                                                    close: function () {
+                                                        var field_id = $j('#' + pt + '_add_new').prevAll('input:hidden').eq(0).attr('id');
+                                                        $j('#' + field_id + '-container').select2('focus').select2('focus');
+                                                    },
+                                                    size: 'full',
+                                                    title: $j(this).attr('title')
+                                                });
+                                            });
+                                        }
+
+                                        /* find and hide parent links if field label has data 'parent_link' set to 'view_parent_hidden' */
+                                        $j('label[data-parent_link=view_parent_hidden]').each(function () {
+                                            $j(this).parents('.form-group').find('.view_parent').hide();
+                                        });
+
+                                        $j('form').on('click', '.view_parent', function () {
+                                            var pt = $j(this).attr('id').replace(/_view_parent$/, '');
+                                            if ($j(this).prevAll('input:hidden').length) {
+                                                var parent_id = $j(this).prevAll('input:hidden').eq(0).val();
+                                            } else {
+                                                var parent_id = $j(this).prevAll().children('input:hidden').eq(0).val();
+                                            }
+
+                                            /* handle radio lookups */
+                                            if ($j(this).prevAll('[type=radio]').length) {
+                                                parent_id = $j(this).prevAll('[type=radio]').eq(0).val();
+                                            }
+
+                                            if (parent_id != '{empty_value}' && parent_id != undefined && parent_id != '') {
+                                                var parent_link = $j(this).parents('.form-group').children('label').data('parent_link');
+                                                switch (parent_link) {
+                                                    case 'view_parent_hidden':
+                                                        break;
+                                                    case 'view_parent_modal':
+                                                        modal_window({
+                                                            url: pt + '_view.php?Embedded=1&SelectedID=' + encodeURIComponent(parent_id),
+                                                            close: function () {
+                                                                var field_id = $j('#' + pt + '_view_parent').prevAll('input:hidden').eq(0).attr('id');
+                                                                $j('#' + field_id + '-container').select2('focus').select2('focus');
+                                                            },
+                                                            size: 'full',
+                                                            title: $j(this).attr('title')
+                                                        });
+                                                        break;
+                                                    case 'view_parent_same_window':
+                                                        window.location = pt + '_view.php?Embedded=' + (embedded_mode ? '1' : '') + '&SelectedID=' + encodeURIComponent(parent_id);
+                                                        break;
+                                                    case 'view_parent_new_window':
+                                                        window.open(pt + '_view.php?SelectedID=' + encodeURIComponent(parent_id));
+                                                        break;
+                                                }
+
+                                            }
+                                        });
+
+
+                                        /* load admin tools for admin user */
+                                        if (!add_new_mode) {
+                                            $j('body').append('<div id="admin-tools-appendix"></div>');
+                                            $j('#admin-tools-appendix').load(
+                                                'ajax_admin_tools.php?table=blogs&id=',
+                                                function (resp) {
+                                                    if (!resp.length) return;
+                                                    $j.ajax('ajax_admin_tools.php?action=get_admin_tools_js&table=blogs&id=');
+                                                }
+                                            );
+                                        }
+
+                                        /* warn user if 'add new' clicked while unsaved changes exist */
+                                        $j('#addNew').click(function () {
+                                            if ($j('#deselect.btn-warning').length) {
+                                                return confirm('Discard changes to this record?');
+                                            }
+                                        });
+
+                                    });
+                                </script>
+
+                                <script>$j(function () {
+                                        $j('#blog_categories_link').removeClass('hidden');
+                                        $j('#xs_blog_categories_link').removeClass('hidden');
+                                        $j('#blogs_link').removeClass('hidden');
+                                        $j('#xs_blogs_link').removeClass('hidden');
+                                        jQuery('form').eq(0).data('already_changed', true); jQuery('form').eq(0).data('already_changed', false);
+                                    });</script>
+                                <script>$j(function () { });</script>
+                                <script>
+                                    // initial lookup values
+                                    AppGini.current_category = { text: "", value: "" };
+
+                                    jQuery(function () {
+                                        setTimeout(function () {
+                                            if (typeof (category_reload) == 'function') category_reload();
+                                        }, 10); /* we need to slightly delay client-side execution of the above code to allow AppGini.ajaxCache to work */
+                                    });
+                                    function category_reload() {
+
+                                        $j("#category-container").select2({
+                                            /* initial default value */
+                                            initSelection: function (e, c) {
+                                                $j.ajax({
+                                                    url: 'ajax_combo.php',
+                                                    dataType: 'json',
+                                                    data: { id: AppGini.current_category.value, t: 'blogs', f: 'category' },
+                                                    success: function (resp) {
+                                                        c({
+                                                            id: resp.results[0].id,
+                                                            text: resp.results[0].text
+                                                        });
+                                                        $j('[name="category"]').val(resp.results[0].id);
+                                                        $j('[id=category-container-readonly]').html('<span id="category-match-text">' + resp.results[0].text + '</span>');
+                                                        if (resp.results[0].id == '{empty_value}') { $j('.btn[id=blog_categories_view_parent]').hide(); } else { $j('.btn[id=blog_categories_view_parent]').show(); }
+
+
+                                                        if (typeof (category_update_autofills) == 'function') category_update_autofills();
+                                                    }
+                                                });
+                                            },
+                                            width: '100%',
+                                            formatNoMatches: function (term) { return 'No matches found!'; },
+                                            minimumResultsForSearch: 10,
+                                            loadMorePadding: 200,
+                                            ajax: {
+                                                url: 'ajax_combo.php',
+                                                dataType: 'json',
+                                                cache: true,
+                                                data: function (term, page) { return { s: term, p: page, t: 'blogs', f: 'category' }; },
+                                                results: function (resp, page) { return resp; }
+                                            },
+                                            escapeMarkup: function (str) { return str; }
+                                        }).on('change', function (e) {
+                                            AppGini.current_category.value = e.added.id;
+                                            AppGini.current_category.text = e.added.text;
+                                            $j('[name="category"]').val(e.added.id);
+                                            if (e.added.id == '{empty_value}') { $j('.btn[id=blog_categories_view_parent]').hide(); } else { $j('.btn[id=blog_categories_view_parent]').show(); }
+
+
+                                            if (typeof (category_update_autofills) == 'function') category_update_autofills();
+                                        });
+
+                                        if (!$j("#category-container").length) {
+                                            $j.ajax({
+                                                url: 'ajax_combo.php',
+                                                dataType: 'json',
+                                                data: { id: AppGini.current_category.value, t: 'blogs', f: 'category' },
+                                                success: function (resp) {
+                                                    $j('[name="category"]').val(resp.results[0].id);
+                                                    $j('[id=category-container-readonly]').html('<span id="category-match-text">' + resp.results[0].text + '</span>');
+                                                    if (resp.results[0].id == '{empty_value}') { $j('.btn[id=blog_categories_view_parent]').hide(); } else { $j('.btn[id=blog_categories_view_parent]').show(); }
+
+                                                    if (typeof (category_update_autofills) == 'function') category_update_autofills();
+                                                }
+                                            });
+                                        }
+
+
+                                    }
+                                </script>
+
+                                <script>
+                                    const form = document.getElementById('add-blog')
+                                    form.addEventListener('submit', add)
+
+                                    async function add(event) {
+                                        event.preventDefault()
+                                        const title = document.getElementById('title').value
+                                        const category = document.getElementById('category').value
+                                        const content = document.getElementById('content').value
+
+                                        const result = await fetch('/api/save-blog', {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json'
+                                            },
+                                            body: JSON.stringify({
+                                                title,
+                                                category,
+                                                content
+                                            })
+                                        }).then((res) => res.json())
+
+                                        if (result.status === 'ok') {
+                                            // everything went fine
+                                            window.localStorage.setItem('token', result.data)
+                                            window.location.href = "/add-blog";
+                                        } else {
+                                            alert(result.error)
+                                        }
+                                    }
+                                </script>
+
+
+                                <script>
+                                    $j(function () {
+                                        var tn = 'blogs';
+
+                                        /* data for selected record, or defaults if none is selected */
+                                        var data = {
+                                            category: { id: '', value: '', text: '' }
+                                        };
+
+                                        /* initialize or continue using AppGini.cache for the current table */
+                                        AppGini.cache = AppGini.cache || {};
+                                        AppGini.cache[tn] = AppGini.cache[tn] || AppGini.ajaxCache();
+                                        var cache = AppGini.cache[tn];
+
+                                        /* saved value for category */
+                                        cache.addCheck(function (u, d) {
+                                            if (u != 'ajax_combo.php') return false;
+                                            if (d.t == tn && d.f == 'category' && d.id == data.category.id)
+                                                return { results: [data.category], more: false, elapsed: 0.01 };
+                                            return false;
+                                        });
+
+                                        cache.start();
+                                    });
+                                </script>
+
+                            </div>
+                        </div><input name="SearchString" value="" type="hidden">
+                </div>
+                </form>
+            </div>
+            <div class="col-xs-1 md-hidden lg-hidden"></div>
+        </div> <!-- Add footer template above here -->
+        <div class="clearfix"></div>
+        <div style="height: 70px;" class="hidden-print"></div>
+
+        </div> <!-- /div class="container" -->
+        <script src="resources/lightbox/js/lightbox.min.js"></script>
+    </body>
+
+</html>

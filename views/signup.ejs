@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js"> <!--<![endif]-->
+<%- include('./partials/signup-head.ejs') %>
+
+	<body>
+		<div class="container theme-yeti theme-compact">
+
+			<nav class="navbar navbar-default navbar-fixed-top hidden-print" role="navigation">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<!-- application title is obtained from the name besides the yellow database icon in AppGini, use underscores for spaces -->
+					<a class="navbar-brand" href="/login"><i class="glyphicon glyphicon-home"></i> BLOG ADMIN</a>
+				</div>
+				<div class="collapse navbar-collapse">
+					
+					<p class="navbar-text navbar-right">&nbsp;</p>
+					<a href="/login" class="btn btn-success navbar-btn navbar-right">Sign In</a>
+					<p class="navbar-text navbar-right">
+						You are not signed in </p>
+				</div>
+			</nav>
+			<div style="height: 70px;" class="hidden-print"></div>
+
+
+			<div class="notifcation-placeholder" id="notifcation-placeholder-15960478"></div>
+			<script>
+				$j(function () {
+					if (window.show_notification != undefined) return;
+
+					window.show_notification = function (options) {
+						/* wait till all dependencies ready */
+						if (window.notifications_ready == undefined) {
+							var op = options;
+							setTimeout(function () { show_notification(op); }, 20);
+							return;
+						}
+
+						var dismiss_class = '';
+						var dismiss_icon = '';
+						var cookie_name = 'hide_notification_' + options.id;
+						var notif_id = 'notifcation-' + Math.ceil(Math.random() * 1000000);
+
+						/* apply provided notficiation id if unique in page */
+						if (options.id != undefined) {
+							if (!$j('#' + options.id).length) notif_id = options.id;
+						}
+
+						/* notifcation should be hidden? */
+						if (Cookies.get(cookie_name) != undefined) return;
+
+						/* notification should be dismissable? */
+						if (options.dismiss_seconds > 0 || options.dismiss_days > 0) {
+							dismiss_class = ' alert-dismissible';
+							dismiss_icon = '<button type="button" class="close" data-dismiss="alert">&times;</button>';
+						}
+
+						/* remove old dismissed notficiations */
+						$j('.alert-dismissible.invisible').remove();
+
+						/* append notification to notifications container */
+						$j(
+							'<div class="alert alert-' + options['class'] + dismiss_class + '" id="' + notif_id + '">' +
+							dismiss_icon +
+							options.message +
+							'</div>'
+						).appendTo('#notifcation-placeholder-15960478');
+
+						var this_notif = $j('#' + notif_id);
+
+						/* dismiss after x seconds if requested */
+						if (options.dismiss_seconds > 0) {
+							setTimeout(function () { this_notif.addClass('invisible'); }, options.dismiss_seconds * 1000);
+						}
+
+						/* dismiss for x days if requested and user dismisses it */
+						if (options.dismiss_days > 0) {
+							var ex_days = options.dismiss_days;
+							this_notif.on('closed.bs.alert', function () {
+								/* set a cookie not to show this alert for ex_days */
+								Cookies.set(cookie_name, '1', { expires: ex_days });
+							});
+						}
+					}
+
+					/* cookies library already loaded? */
+					if (undefined != window.Cookies) {
+						window.notifications_ready = true;
+						return;
+					}
+
+					/* load cookies library */
+					$j.ajax({
+						url: 'resources/jscookie/js.cookie.js',
+						dataType: 'script',
+						cache: true,
+						success: function () { window.notifications_ready = true; }
+					});
+				})
+			</script>
+
+
+			<!-- process notifications -->
+			<div style="height: 60px; margin: -15px 0 -45px;">
+			</div>
+
+			<!-- Add header template below here .. -->
+
+
+			<div class="row">
+				<div class="hidden-xs col-sm-4 col-md-6 col-lg-8" id="signup_splash">
+					<!-- customized splash content here -->
+				</div>
+
+				<div class="col-sm-8 col-md-6 col-lg-4">
+					<div class="panel panel-success">
+
+						<div class="panel-heading">
+							<h1 class="panel-title"><strong>Sign Up Here!</strong></h1>
+						</div>
+
+						<div class="panel-body">
+							<form id="reg-form">
+								<div class="form-group">
+									<label for="username" class="control-label">Username</label>
+									<input class="form-control input-lg" type="text" required="" placeholder="Username"
+										id="username" name="newUsername" autocomplete="off">
+									<span id="usernameAvailable" class="help-block hidden pull-left"><i
+											class="glyphicon glyphicon-ok"></i> Username is available and you can take
+										it.</span>
+									<span id="usernameNotAvailable" class="help-block hidden pull-left"><i
+											class="glyphicon glyphicon-remove"></i> Username already exists or is
+										invalid. Make sure you provide a username containing 4 to 20 valid
+										characters.</span>
+									<div class="clearfix"></div>
+								</div>
+
+								<div class="row">
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label for="password" class="control-label">Password</label>
+											<input class="form-control" type="password" required=""
+												placeholder="Password" id="password" name="password" autocomplete="off">
+										</div>
+									</div>
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label for="confirmPassword" class="control-label">Confirm Password</label>
+											<input class="form-control" type="password" required=""
+												placeholder="Confirm Password" id="confirmPassword"
+												name="confirmPassword" autocomplete="off">
+										</div>
+									</div>
+								</div>
+
+								<div class="row form-group">
+									<div class="col-sm-3"><label class="control-label" for="custom1" autocomplete="off"
+											id="fullname">Full Name</label>
+									</div>
+									<div class="col-sm-9"><input class="form-control" type="text"
+											placeholder="Full Name" id="custom1" name="custom1"></div>
+								</div>
+
+								<div class="row">
+									<div class="col-sm-offset-3 col-sm-6">
+										<button class="btn btn-primary btn-lg btn-block" value="signUp" id="submit"
+											type="submit" name="signUp">Sign Up</button>
+									</div>
+								</div>
+
+							</form>
+						</div> <!-- /div class="panel-body" -->
+					</div> <!-- /div class="panel ..." -->
+				</div> <!-- /div class="col..." -->
+			</div> <!-- /div class="row" -->
+			<script>
+				const form = document.getElementById('reg-form')
+				form.addEventListener('submit', registerUser)
+
+				async function registerUser(event) {
+					event.preventDefault()
+					const username = document.getElementById('username').value
+					const password = document.getElementById('password').value
+					const confirmpassword = document.getElementById('confirmPassword').value
+					const fullname = document.getElementById('custom1').value
+
+					const result = await fetch('/api/register', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json'
+						},
+						body: JSON.stringify({
+							username,
+							password,
+							fullname,
+							confirmpassword
+						})
+					}).then((res) => res.json())
+
+					if (result.status === 'ok') {
+						// everythign went fine
+						alert('Success')
+					} else {
+						alert(result.error)
+					}
+				}
+			</script>
+			
+			<style>
+				#usernameAvailable,
+				#usernameNotAvailable {
+					cursor: pointer;
+				}
+			</style>
+
+
+			<!-- Add footer template above here -->
+			<div class="clearfix"></div>
+			<div style="height: 70px;" class="hidden-print"></div>
+
+		</div> <!-- /div class="container" -->
+		<script src="/resources/lightbox/js/lightbox.min.js"></script>
+	</body>
+
+</html>
